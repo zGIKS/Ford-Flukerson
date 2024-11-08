@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafo Generado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo General */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #1e1e2f;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1, h2 {
+            color: #00bfa6;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #e0e0e0;
+        }
+
+        /* Contenedor del Grafo */
+        .graph-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(30, 30, 47, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 191, 166, 0.3);
+            text-align: center;
+        }
+
+        .error-message {
+            color: #ff4c4c;
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .error-image {
+            margin-top: 20px;
+            max-width: 300px;
+            border: 2px solid #ff4c4c;
+            border-radius: 10px;
+        }
+
+        img {
+            border: 2px solid #00bfa6;
+            border-radius: 10px;
+            max-width: 90%;
+            margin: 15px 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 191, 166, 0.5);
+        }
+
+        pre {
+            background-color: #2a2a40;
+            padding: 10px;
+            border-radius: 10px;
+            color: #00e0b8;
+            font-size: 1.1em;
+            overflow: auto;
+        }
+
+        /* Botones */
+        .button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #00bfa6, #005f5f);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 191, 166, 0.4);
+            transition: background 0.3s ease, transform 0.2s;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #00e0b8, #007a7a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 191, 166, 0.6);
+        }
+
+        /* Formularios */
+        form {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 1.1em;
+            margin: 10px 0;
+            color: #00e0b8;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #00bfa6;
+            background-color: #2a2a40;
+            color: #00e0b8;
+            font-family: 'Roboto Mono', monospace;
+            outline: none;
+            transition: border 0.3s;
+            margin-bottom: 15px;
+        }
+
+        select:focus {
+            border: 1px solid #00e0b8;
+        }
+
+        /* Ajustes para pantallas más pequeñas */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            .button {
+                padding: 10px 20px;
+            }
+
+            .graph-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Grafo Generado</h1>
+
+    <div class="graph-container">
+        {% if error %}
+            <div class="error-message">{{ error_message }}</div>
+            <a href="/" class="button">Volver a la página principal</a>
+        {% else %}
+            <h2>Matriz Utilizada:</h2>
+            <pre>{{ matrix_str }}</pre>
+
+            <!-- Mostrar el grafo original -->
+            <h2>Imagen del Grafo Original:</h2>
+            <img src="data:image/png;base64,{{ graph_img }}" alt="Grafo Original">
+
+            <!-- Mostrar el grafo con el nuevo flujo máximo -->
+            <h2>Imagen del Nuevo Flujo Máximo:</h2>
+            <img src="data:image/png;base64,{{ max_flow_graph_img }}" alt="Flujo Máximo">
+
+            <h2>Flujo Máximo:</h2>
+            <p>El flujo máximo de la red es: <strong>{{ max_flow }}</strong></p>
+
+            <!-- Formulario para calcular el nuevo flujo máximo -->
+            <form action="/calculate_new_flow" method="POST">
+                <input type="hidden" name="n" value="{{ n }}">
+                {% for i in range(n) %}
+                <input type="hidden" name="matrix_{{ i }}" value="{{ matrix_str.splitlines()[i].strip('[]') }}">
+                {% endfor %}
+
+                <label for="source">Selecciona el vértice de origen:</label>
+                <select name="source" id="source" required>
+                    {% for i in range(n) %}
+                    <option value="{{ i }}">Vértice {{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="sink">Selecciona el vértice de destino:</label>
+                <select name="sink" id="sink" required>
+                    {% for i in range(n) %}
+                    <option value="{{ i }}">Vértice {{ i }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="button">Calcular nuevo flujo máximo</button>
+                <a href="/" class="button">Generar otro grafo</a><br><br>
+            </form>
+        {% endif %}
+    </div>
+</body>
+
+</html>

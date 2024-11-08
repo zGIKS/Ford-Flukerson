@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1e1e2f;
+            color: #e0e0e0;
+            font-family: 'Roboto', sans-serif;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #ff4c4c;
+            font-size: 3em;
+        }
+
+        p {
+            font-size: 1.5em;
+        }
+
+        img {
+            width: 300px;
+            margin-top: 20px;
+        }
+
+        a {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00bfa6, #005f5f);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 191, 166, 0.4);
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        a:hover {
+            background: linearzw-gradient(135deg, #00e0b8, #007a7a);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ error_message }}</h1>
+    <p>Por favor, modifique la matriz e intente nuevamente.</p>
+    <img src="{{ url_for('static', filename='builtin/4x.gif') }}" alt="Error" class="error-image">
+    <a href="/">Volver a la página principal</a>
+</body>
+</html>
